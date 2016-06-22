@@ -269,11 +269,11 @@ void STLImporter::LoadASCIIFile()
                 throw DeadlyImportError( "STL: Node name too long" );
             }
 
-            pScene->mRootNode->mName.length = temp;
-            memcpy(pScene->mRootNode->mName.data,szMe,temp);
-            pScene->mRootNode->mName.data[temp] = '\0';
+            pMesh->mName.length = temp;
+            memcpy(pMesh->mName.data,szMe,temp);
+            pMesh->mName.data[temp] = '\0';
         }
-        else pScene->mRootNode->mName.Set("<STL_ASCII>");
+        else pMesh->mName.Set("<STL_ASCII>");
 
         unsigned int faceVertexCounter = 0;
         for ( ;; )
@@ -387,6 +387,11 @@ void STLImporter::LoadASCIIFile()
     {
         pScene->mMeshes[i] = meshes[i];
     }
+
+    if (pScene->mNumMeshes == 1)
+        pScene->mRootNode->mName = aiString(pScene->mMeshes[0]->mName);
+    else
+        pScene->mRootNode->mName.Set("<STL_ASCII>");
 }
 
 // ------------------------------------------------------------------------------------------------
