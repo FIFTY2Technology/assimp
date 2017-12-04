@@ -356,10 +356,6 @@ void STLImporter::LoadASCIIFile()
             }
         }
 
-        if (positionBuffer.empty())    {
-            pMesh->mNumFaces = 0;
-            throw DeadlyImportError("STL: ASCII file is empty or invalid; no data loaded");
-        }
         if (positionBuffer.size() % 3 != 0)    {
             pMesh->mNumFaces = 0;
             throw DeadlyImportError("STL: Invalid number of vertices");
@@ -370,13 +366,14 @@ void STLImporter::LoadASCIIFile()
         }
         pMesh->mNumFaces = positionBuffer.size() / 3;
         pMesh->mNumVertices = positionBuffer.size();
-        pMesh->mVertices = new aiVector3D[pMesh->mNumVertices];
-        memcpy(pMesh->mVertices, &positionBuffer[0].x, pMesh->mNumVertices * sizeof(aiVector3D));
-        positionBuffer.clear();
-        pMesh->mNormals = new aiVector3D[pMesh->mNumVertices];
-        memcpy(pMesh->mNormals, &normalBuffer[0].x, pMesh->mNumVertices * sizeof(aiVector3D));
-        normalBuffer.clear();
-
+        if (!positionBuffer.empty())    {
+            pMesh->mVertices = new aiVector3D[pMesh->mNumVertices];
+            memcpy(pMesh->mVertices, &positionBuffer[0].x, pMesh->mNumVertices * sizeof(aiVector3D));
+            positionBuffer.clear();
+            pMesh->mNormals = new aiVector3D[pMesh->mNumVertices];
+            memcpy(pMesh->mNormals, &normalBuffer[0].x, pMesh->mNumVertices * sizeof(aiVector3D));
+            normalBuffer.clear();
+        }
         // now copy faces
         addFacesToMesh(pMesh);
     }
